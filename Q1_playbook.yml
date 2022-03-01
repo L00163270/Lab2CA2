@@ -1,0 +1,36 @@
+- name: Install and Enable NTP Service for logging                                                                                                                                          
+  hosts: nginxlyit                                                                                                                                                                        
+  become: yes                                                                                                                                                                       
+  tasks:
+      - name: Install packages
+        apt: 
+          name: ntp
+          state: latest
+      - name: Enable ntp service
+        service:
+          name: ntp
+          state: started
+          enabled: yes
+      - name: Install apache http.
+        apt: 
+          name: apache2
+          state: latest
+      - name: Enable http service.
+        service:
+          name: apache2
+          state: restarted
+          enabled: yes
+      - name: Install GIT.
+        apt: 
+          name: git
+          state: latest
+      - name: Delete file before copy
+        file:
+          path: /var/www/html/
+          state: absent
+      - name: Clone a github repository to temp folder.
+        git:
+          repo: https://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@github.com/L00163270/Lab2CA2.git
+          dest: /var/www/html/
+          clone: yes
+          update: yes
