@@ -1,0 +1,34 @@
+- name: S3 Bucket data entry                                                                                                                                          
+  hosts: nginxlyit
+  become: yes                                                                                                                                                                                                                                                                                                                                              
+  tasks:
+
+    - name: Install requests python package
+      pip:
+        name: requests
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Get data from S3 Bucket
+      amazon.aws.aws_s3:
+        aws_access_key: "AKIA5RP2TV45WJWXCSLT"
+        aws_secret_key: "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"
+        bucket: "lyit-s3demo"
+        object: "Data.csv"
+        dest: /home/l00163270/Data.csv
+        mode: get
+
+    - name: Create Database
+      mysql_db: name=testdb state=present login_user=l00163270 login_password="Somno@123"
+
+    - name: Create Table
+      mysql_query:
+       login_db: testdb
+       query: CREATE TABLE TestTable (C_CODE varchar(25), C_VALUE varchar(25))
+
+    - name: insert data into file using csv 
+      mysql_query:
+       login_db: testdb
+       query: LOAD DATA INFILE '/home/l00163270/Data.csv' INTO TABLE Test.TestTable FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n'
+
+# LOAD DATA INFILE '/tmp/test.csv' INTO TABLE Test.TestTable FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';

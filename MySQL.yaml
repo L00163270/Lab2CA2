@@ -1,0 +1,24 @@
+- name: Server hardening                                                                                                                                          
+  hosts: nginxlyit                                                                                                                                                                        
+  become: yes                                                                                                                                                                       
+  tasks:
+    - name: Patch to latest version
+      Package: 
+        name: '*'
+        state: latest
+
+    - name: Install MySQL
+      action: apt pkg={{item}} state=latest
+      with_items:
+        - mysql-server
+        - mysql-client
+        - python3-mysqldb
+
+    - name: Start the MySQL service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Create deploy user for mysql
+      mysql_user: user="l00163270" host="%" password="Somno@123" priv=*.*:ALL,GRANT
